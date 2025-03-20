@@ -5,7 +5,16 @@ public class Users {
     private String name;
     private String username;
     private String password;
+    private String phone;
     private String role;
+    private Integer count;
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public Integer getId() {
         return id;
@@ -47,6 +56,14 @@ public class Users {
         this.role = role;
     }
 
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
     @Override
     public String toString() {
         return "Users{" +
@@ -54,7 +71,9 @@ public class Users {
                 ", name='" + name + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", phone='" + phone + '\'' +
                 ", role='" + role + '\'' +
+                ", count='" + count + '\'' +
                 '}';
     }
 }
