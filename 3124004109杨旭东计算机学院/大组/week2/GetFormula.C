@@ -219,10 +219,16 @@ bool IsLegal(ListStack* liststack) {
 
 double GetDouble(double OriNum, bool IsDouble, bool IsNagetive, int DecimalPoint) {
 	if (IsDouble) {
-		OriNum = OriNum / (DecimalPoint * 10);
+		double Temp = 1;
+		while (DecimalPoint) {
+			DecimalPoint--;
+			Temp *= 10;
+		}
+		OriNum = OriNum / Temp;
 	}
 	if (IsNagetive) {
 		OriNum = OriNum * (-1);
 	}
+	
 	return OriNum;
 }
