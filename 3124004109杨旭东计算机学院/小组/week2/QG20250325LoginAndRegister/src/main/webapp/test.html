@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <p>你是个好人</p>
+
+    <script>
+        //1.创建核心对象
+        var xhttp;
+        if(window.XMLHttpRequest){
+            xttp=new XMLHttpRequest();
+
+        }else{
+            xttp =new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        //2.发送请求
+        xttp.open("GET","http://localhost:8080/QG20250325LoginAndRegister_war/Ajax");
+        xttp.send();
+        //3.获取响应
+        xttp.onreadystatechange = function(){
+            if(this.readyState==4&&this.status==200){
+                alert("hhh");
+            }
+        }
+    </script>
+
+</body>
+</html>

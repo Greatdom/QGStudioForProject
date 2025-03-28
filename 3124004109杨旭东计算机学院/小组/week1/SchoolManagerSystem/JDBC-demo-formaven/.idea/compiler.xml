@@ -9,8 +9,5 @@
         <module name="JDBC-demo-formaven" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="JDBC-demo" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>
