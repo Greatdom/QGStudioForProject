@@ -19,7 +19,7 @@ ListStack* NewStack() {
 
 bool IsNotEmpty(ListStack* liststack) {
 	if (liststack == NULL) {
-		printf("这是空栈");
+		printf("这是未初始化栈");
 		exit(EXIT_FAILURE);
 	}
 	else {
