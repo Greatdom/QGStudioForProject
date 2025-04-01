@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../asset/css/front.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <div class="form login" v-show="IsLogin">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">登录界面</h2>
+            <div>
+                <label for="LoginUserName"></label>
+                <input id="LoginUserName" type="text" placeholder="请输入用户名" v-model="LoginUserName">
+            </div>
+            <div>
+                <label for="LoginPassWord"></label>
+                <input id="LoginPassWord" type="text" placeholder="请输入密码" v-model="LoginPassWord">
+            </div>
+            <div style="text-align: end"><p @click="SwitchIsLogin">没有账号？注册</p></div>
+            <div>
+                <button @click="Login">登录</button>
+            </div>
+
+        </div>
+        <div class="form register" v-show="!IsLogin">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">注册界面</h2>
+            <div>
+                <label for="RegisterUserName"></label>
+                <input id="RegisterUserName" type="text" placeholder="请输入用户名" v-model="RegisterUserName">
+            </div>
+            <div>
+                <label for="RegisterPassWord"></label>
+                <input id="RegisterPassWord" type="text" placeholder="请输入密码" v-model="RegisterPassWord">
+            </div>
+            <div style="text-align: end"><p @click="SwitchIsLogin">已有账号？登录</p></div>
+            <div>
+                <button @click="Register">注册</button>
+            </div>
+        </div>
+    </div>
+
+<script src="../js/vue.js"></script>
+
+    <script>
+        const app=new Vue({
+            el:'#app',
+            data:{
+                IsLogin:true,
+                LoginUserName:"",
+                LoginPassWord:"",
+                RegisterUserName:"",
+                RegisterPassWord:""
+            },
+            methods:{
+                SwitchIsLogin(){
+                    this.IsLogin=!this.IsLogin
+                },
+                ReLoad(){
+                    this.IsLogin=true;
+                    this.LoginUserName="";
+                    this.LoginPassWord="";
+                    this.RegisterUserName="";
+                    this.RegisterPassWord="";
+
+                },
+                Register(){
+                    if(this.RegisterUserName===""||this.RegisterPassWord===""){
+                        alert("用户名或密码不能为空！");
+                    }else{
+                        this.RegisterUserName=this.RegisterUserName.trim();
+                        this.RegisterPassWord=this.RegisterPassWord.trim();
+                        let RegisterHttp;
+                        if(window.XMLHttpRequest){
+                            RegisterHttp=new XMLHttpRequest();
+
+                        }else{
+                            RegisterHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                        }
+                        RegisterHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/Register");
+
+                        // RegisterHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        RegisterHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                        let requestBody = "username=" + encodeURIComponent(this.RegisterUserName)
+                            + "&password=" + encodeURIComponent(this.RegisterPassWord);
+                        RegisterHttp.send(requestBody);
+                        RegisterHttp.onreadystatechange = function(){
+                            if(this.readyState==4&&this.status==200){
+                                alert(this.responseText+"试图注册");
+                            }
+                        }
+                    }
+
+                    this.ReLoad();
+                },
+                Login(){
+                    if(this.LoginUserName===""||this.LoginPassWord===""){
+                        alert("用户名或密码不能为空！");
+                    }else{
+                        this.LoginUserName=this.LoginUserName.trim();
+                        this.LoginPassWord=this.LoginPassWord.trim();
+                        let LoginHttp;
+                        if(window.XMLHttpRequest){
+                            LoginHttp=new XMLHttpRequest();
+
+                        }else{
+                            LoginHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                        }
+                        LoginHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/Login");
+
+                        // RegisterHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        LoginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                        let requestBody = "username=" + encodeURIComponent(this.LoginUserName)
+                            + "&password=" + encodeURIComponent(this.LoginPassWord);
+                        LoginHttp.send(requestBody);
+                        LoginHttp.onreadystatechange = function(){
+                            if(this.readyState==4&&this.status==200){
+                                alert(this.responseText+"试图登录");
+
+                            }
+                        }
+                    }
+
+                    this.ReLoad();
+                }
+            }
+
+        })
+
+    </script>
+
+</body>
+</html>
