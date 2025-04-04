@@ -43,10 +43,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-show="!StudentsTable">
+                <tr v-show="!StudentsTable" class="NONE">
                     <td color="black"><strong>无数据!</strong></td>
                 </tr>
-                <tr v-for="student in StudentsTable" :key="student.id">
+                <tr v-for="student in StudentsTable" :key="student.id" @click="FocusOnSomeBody(student)">
                     <td>{{ student?.id||'无ID' }}</td>
                     <td>{{ student?.name||'无姓名'}}</td>
                     <td>{{ student?.username || '无账号' }}</td>
@@ -58,6 +58,23 @@
             </table>
         </div>
 
+        <div class="RightList">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>{{ FocusingStudent ? FocusingStudent+"的选课列表:" : '尚未选择学生...' }}</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!CoursesOfStudentTable" class="NONE">
+                    <td color="black"><strong>{{ FocusingStudent ? "没有选课" : '无选课数据！' }}</strong></td>
+                </tr>
+                <tr v-for="course in CoursesOfStudentTable" :key="course.id">
+                    <td>{{ course?.courseName||'未知课程' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
     </div>
 
@@ -69,26 +86,44 @@
         data: {
             command:"",
             StudentsTable:null,
+            CoursesOfStudentTable:null,
+            FocusingStudent:null
         },
         mounted() {
             this.command="SelectAllStudents";
             this.load();
             this.command="";
-
-            // this.StudentsTable=
-            // [{"count":0,"id":1,"name":"joker","password":"aaa","phone":"13412345678","role":"STUDENT","username":"aaa"},
-            // {"count":0,"id":2,"password":"123456","role":"STUDENT","username":"test"},
-            //     {"count":0,"id":2,"password":"123456","role":"STUDENT","username":"test"},
-            // {"count":0,"id":3,"password":"student","role":"STUDENT","username":"student"}];
-
-            // const storedUser = localStorage.getItem("currentUser");
-            // if (storedUser) {
-            //     this.currentUser = JSON.parse(storedUser);
-            //     console.log("当前用户：", this.currentUser);
-            //
-            // }
         },
         methods:{
+            FocusOnSomeBody(somebody){
+                this.FocusingStudent=somebody.username;
+                this.command="SelectCourseByStudent";
+                let LoadHttp;
+                if(window.XMLHttpRequest){
+                    LoadHttp=new XMLHttpRequest();
+
+                }else{
+                    LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoadHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/ManagerSelectAllStudentsServlet");
+                LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                let requestBody = "command=" + encodeURIComponent(this.command)
+                +"&username=" + encodeURIComponent(somebody.username);
+                LoadHttp.send(requestBody);
+                LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let result = JSON.parse(event.target.responseText);
+                        if (result.code === "200") {
+                            this.CoursesOfStudentTable = result.data; // 更新 StudentsTable
+                            if(this.CoursesOfStudentTable.length === 0)
+                                this.CoursesOfStudentTable=null;
+                        } else {
+                            alert("生成数据失败,请重新进入页面");
+                        }
+                    }
+                }
+                this.command="";
+            },
             load(){
                 // UpdateHttp.onreadystatechange = function(){
                 //     if(this.readyState==4&&this.status==200){

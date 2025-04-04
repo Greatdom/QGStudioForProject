@@ -42,10 +42,10 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-show="!CoursesTable">
+        <tr v-show="!CoursesTable" class="NONE">
           <td color="black"><strong>无数据!</strong></td>
         </tr>
-        <tr v-for="course in CoursesTable" :key="course.id">
+        <tr v-for="course in CoursesTable" :key="course.id" @click="FocusOnSomeBody(course)">
           <td>{{ course?.id||'无ID' }}</td>
           <td>{{ course?.name||'无名课程' }}</td>
           <td>{{ course?.status||'未知状态' }}</td>
@@ -53,6 +53,25 @@
         </tbody>
       </table>
     </div>
+
+    <div class="RightList">
+      <table>
+        <thead style="display:block;width:100%;height: 10%">
+        <tr style="background-color: cadetblue">
+          <td><strong>{{ FocusingCourse ? FocusingCourse+"课程的学生列表:" : '尚未选择学生...' }}</strong></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-show="!StudentOfCourseTable" class="NONE">
+          <td color="black"><strong>{{ FocusingCourse ? "没有学生" : '无学生数据！' }}</strong></td>
+        </tr>
+        <tr v-for="course in StudentOfCourseTable" :key="course.id">
+          <td>{{ course?.studentName||'未知学生' }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
 
   </div>
 
@@ -64,6 +83,8 @@
     data: {
       command:"",
       CoursesTable:null,
+      StudentOfCourseTable:null,
+      FocusingCourse:null
     },
     mounted() {
       this.command="SelectAllCourses";
@@ -76,14 +97,37 @@
       //   {"id":4,"name":"Chinese","status":"否"}
       // ];
 
-      // const storedUser = localStorage.getItem("currentUser");
-      // if (storedUser) {
-      //     this.currentUser = JSON.parse(storedUser);
-      //     console.log("当前用户：", this.currentUser);
-      //
-      // }
     },
     methods:{
+      FocusOnSomeBody(somebody){
+        this.FocusingCourse=somebody.name;
+        this.command="SelectCourseByStudent";
+        let LoadHttp;
+        if(window.XMLHttpRequest){
+          LoadHttp=new XMLHttpRequest();
+
+        }else{
+          LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        LoadHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/ManagerSelectAllCoursesServlet");
+        LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        let requestBody = "command=" + encodeURIComponent(this.command)
+                +"&name=" + encodeURIComponent(somebody.name);
+        LoadHttp.send(requestBody);
+        LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+          if (event.target.readyState === 4 && event.target.status === 200) {
+            let result = JSON.parse(event.target.responseText);
+            if (result.code === "200") {
+              this.StudentOfCourseTable = result.data; // 更新 StudentsTable
+              if(this.StudentOfCourseTable.length === 0)
+                this.StudentOfCourseTable=null;
+            } else {
+              alert("生成数据失败,请重新进入页面");
+            }
+          }
+        }
+        this.command="";
+      },
         load(){
           if(this.command===""){
             alert("请进行有效的指令");

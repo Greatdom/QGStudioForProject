@@ -40,10 +40,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-show="!CoursesTable">
+                <tr v-show="!CoursesTable" class="NONE">
                     <td color="black"><strong>无数据!</strong></td>
                 </tr>
-                <tr v-for="course in CoursesTable" :key="course.id">
+                <tr v-for="course in CoursesTable" :key="course.id" @click="FocusOnSomeBody(course)">
                     <td>{{ course?.courseId||'无课程ID' }}</td>
                     <td>{{ course?.studentId||'无学生ID' }}</td>
                     <td>{{ course?.courseName||'无名课程' }}</td>
@@ -88,11 +88,12 @@
 
         },
         methods:{
+            FocusOnSomeBody(somebody){
+                alert(`点击了：${somebody.name}`);
+            },
             load(){
                 if(this.command===""){
                     alert("请进行有效的指令");
-                }else if(this.currentUser===null){
-                 alert("请先登录");
                 }else{
                     let LoadHttp;
                     if(window.XMLHttpRequest){

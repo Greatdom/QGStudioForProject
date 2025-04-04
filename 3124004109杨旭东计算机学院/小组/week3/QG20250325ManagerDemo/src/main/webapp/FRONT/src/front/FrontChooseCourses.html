@@ -39,10 +39,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-show="!CoursesTable" >
+                <tr v-show="!CoursesTable" class="NONE">
                     <td color="black"><strong>无数据!</strong></td>
                 </tr>
-                <tr v-for="course in CoursesTable" :key="course.id">
+                <tr v-for="course in CoursesTable" :key="course.id" @click="showSelectForm(course)">
                     <td>{{ course?.id||'无ID' }}</td>
                     <td>{{ course?.name||'无名课程' }}</td>
                     <td>{{ course?.status||'未知状态' }}</td>
@@ -53,6 +53,17 @@
 
     </div>
 
+    <div v-show="SelectForm" class="updateForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">选课界面</h2>
+<!--            <div class="inputText">-->
+<!--                <strong style="margin:0 8px">姓名:</strong><input type="text" placeholder="请输入姓名" v-model="FormName">-->
+<!--            </div>-->
+            <div>
+                <button @click="Cancel" style="background-color:darkorange;color: aliceblue">取消</button>
+            </div>
+        </div>
+    </div>
 
 </div>
 
@@ -62,25 +73,25 @@
         el: '#app',
         data: {
             command:"",
+            currentUser:null,
             CoursesTable:null,
+            SelectingCourse:null,//用于表单
+            SelectForm:false,
         },
         mounted() {
+            const storedUser = localStorage.getItem("currentUser");
+            if (storedUser) {
+                this.currentUser = JSON.parse(storedUser);
+                console.log("当前用户：", this.currentUser);
+
+            }
+            // this.CoursesTable=[{"id":2,"name":"maths","status":"��"},
+            //     {"id":3,"name":"English","status":"��"},
+            //     {"id":4,"name":"Chinese","status":"��"}];
             this.command="SelectAllCourses";
             this.load();
             this.command="";
 
-            // this.CoursesTable=[
-            //   {"id":2,"name":"maths","status":"是"},
-            //   {"id":3,"name":"English","status":"否"},
-            //   {"id":4,"name":"Chinese","status":"否"}
-            // ];
-
-            // const storedUser = localStorage.getItem("currentUser");
-            // if (storedUser) {
-            //     this.currentUser = JSON.parse(storedUser);
-            //     console.log("当前用户：", this.currentUser);
-            //
-            // }
         },
         methods:{
             load(){
@@ -114,8 +125,19 @@
                     }
 
                 }
-            }
+            },
+            Cancel(){
+                this.showSelectForm(null);
+            },
+            showSelectForm(somebody){
 
+                this.SelectForm=!this.SelectForm;
+                if(this.SelectForm){
+                    this.SelectingCourse=somebody;
+                }else{
+                    this.SelectingCourse=null;
+                }
+            }
         },
     });
 </script>

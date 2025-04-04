@@ -6,20 +6,35 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="../asset/css/front.css">
-    <title>Document</title>
+    <title>登录注册界面</title>
 </head>
-<body>
-    <div id="app">
+<body style=" background-color: blanchedalmond;
+    background-image: url(../asset/img/background.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;">
+    <div id="app" class="LoginAndRegister">
         <div class="form login" v-show="IsLogin">
             <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">登录界面</h2>
-            <div>
+            <div class="inputText">
                 <label for="LoginUserName"></label>
                 <input id="LoginUserName" type="text" placeholder="请输入用户名" v-model="LoginUserName">
             </div>
-            <div>
+            <div class="inputText">
                 <label for="LoginPassWord"></label>
                 <input id="LoginPassWord" type="text" placeholder="请输入密码" v-model="LoginPassWord">
             </div>
+
+
+            <div class="select">
+                <strong>角色:</strong>
+                <label>
+                    <input type="radio" value="ADMIN" v-model="LoginRole" >管理员
+                    <input type="radio" value="STUDENT" v-model="LoginRole" >用户
+                </label>
+            </div>
+
+
+
             <div style="text-align: end"><p @click="SwitchIsLogin">没有账号？注册</p></div>
             <div>
                 <button @click="Login">登录</button>
@@ -28,14 +43,24 @@
         </div>
         <div class="form register" v-show="!IsLogin">
             <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">注册界面</h2>
-            <div>
+            <div class="inputText">
                 <label for="RegisterUserName"></label>
                 <input id="RegisterUserName" type="text" placeholder="请输入用户名" v-model="RegisterUserName">
             </div>
-            <div>
+            <div class="inputText">
                 <label for="RegisterPassWord"></label>
                 <input id="RegisterPassWord" type="text" placeholder="请输入密码" v-model="RegisterPassWord">
             </div>
+
+            <div class="select">
+                <strong>角色:</strong>
+                <label>
+                    <input type="radio" value="ADMIN" v-model="RegisterRole" >管理员
+                    <input type="radio" value="STUDENT" v-model="RegisterRole" >用户
+                </label>
+            </div>
+
+
             <div style="text-align: end"><p @click="SwitchIsLogin">已有账号？登录</p></div>
             <div>
                 <button @click="Register">注册</button>
@@ -52,8 +77,11 @@
                 IsLogin:true,
                 LoginUserName:"",
                 LoginPassWord:"",
+                LoginRole:"STUDENT",
                 RegisterUserName:"",
-                RegisterPassWord:""
+                RegisterPassWord:"",
+                RegisterRole:"STUDENT",
+                CurrentUser:""//如果成功登录则有数据并跳转
             },
             methods:{
                 SwitchIsLogin(){
@@ -65,7 +93,8 @@
                     this.LoginPassWord="";
                     this.RegisterUserName="";
                     this.RegisterPassWord="";
-
+                    this.LoginRole="STUDENT";
+                    this.RegisterRole="STUDENT";
                 },
                 Register(){
                     if(this.RegisterUserName===""||this.RegisterPassWord===""){
@@ -86,11 +115,23 @@
                         RegisterHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
                         let requestBody = "username=" + encodeURIComponent(this.RegisterUserName)
-                            + "&password=" + encodeURIComponent(this.RegisterPassWord);
+                            + "&password=" + encodeURIComponent(this.RegisterPassWord)
+                            + "&role=" + encodeURIComponent(this.RegisterRole);
                         RegisterHttp.send(requestBody);
                         RegisterHttp.onreadystatechange = function(){
-                            if(this.readyState==4&&this.status==200){
-                                alert(this.responseText+"试图注册");
+                            if(this.readyState===4&&this.status===200){
+
+                                this.CurrentUser=this.responseText;
+                                this.CurrentUser= JSON.parse(this.responseText);
+                                console.log(this.CurrentUser);
+                                if(this.CurrentUser.code==="200"){
+                                    alert(this.CurrentUser.msg);
+
+                                }else{
+                                    alert(this.CurrentUser.msg);
+                                }
+
+
                             }
                         }
                     }
@@ -98,6 +139,7 @@
                     this.ReLoad();
                 },
                 Login(){
+
                     if(this.LoginUserName===""||this.LoginPassWord===""){
                         alert("用户名或密码不能为空！");
                     }else{
@@ -116,11 +158,33 @@
                         LoginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
                         let requestBody = "username=" + encodeURIComponent(this.LoginUserName)
-                            + "&password=" + encodeURIComponent(this.LoginPassWord);
+                            + "&password=" + encodeURIComponent(this.LoginPassWord)
+                            + "&role=" + encodeURIComponent(this.LoginRole);
                         LoginHttp.send(requestBody);
                         LoginHttp.onreadystatechange = function(){
-                            if(this.readyState==4&&this.status==200){
-                                alert(this.responseText+"试图登录");
+                            if(this.readyState===4&&this.status===200){
+                                this.CurrentUser=this.responseText;
+                                this.CurrentUser= JSON.parse(this.responseText);
+                                console.log(this.CurrentUser);
+                                if(this.CurrentUser.code==="200"){
+                                    alert(this.CurrentUser.msg);
+                                    this.CurrentUser=this.CurrentUser.data;
+                                    //登录验证成功后视角色跳转相应页面
+                                    if(this.CurrentUser.role==="ADMIN"){
+                                        localStorage.setItem("currentUser", JSON.stringify(this.CurrentUser));
+                                        window.location.href = "ManagerHome.html";
+                                    }else if(this.CurrentUser.role==="STUDENT"){
+                                        localStorage.setItem("currentUser", JSON.stringify(this.CurrentUser));
+                                        window.location.href = "FrontHome.html";
+                                    }else{
+                                        alert("角色错误");
+                                    }
+
+                                }else{
+                                    alert(this.CurrentUser.msg);
+                                }
+
+
 
                             }
                         }

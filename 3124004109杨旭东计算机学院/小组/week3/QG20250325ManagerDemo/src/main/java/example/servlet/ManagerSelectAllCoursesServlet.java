@@ -3,6 +3,9 @@ package com.example.servlet;
 import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
 import com.example.controller.CoursesController;
+import com.example.controller.StudentCoursesController;
+import com.example.entity.Courses;
+import com.example.entity.Users;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,11 +22,20 @@ public class ManagerSelectAllCoursesServlet extends HttpServlet {
         String command=req.getParameter("command");
 
         CoursesController coursesController=new CoursesController();
+        StudentCoursesController studentCoursesController=new StudentCoursesController();
         Result result=null;
         if(command==null|| command.isEmpty()){
             result=Result.error();
         }else if("SelectAllCourses".equals(command)){
             result=coursesController.selectAll();
+        }else if("SelectCourseByStudent".equals(command)){
+            result=coursesController.selectByCoursename(req.getParameter("name"));
+            if("200".equals(result.getCode())){
+                Courses courses=(Courses)result.getData();
+                result=studentCoursesController.selectByCourse(courses);
+            }else{
+                result=Result.error();
+            }
         }else{
             result=Result.error();
         }
