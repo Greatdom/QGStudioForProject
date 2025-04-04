@@ -2,6 +2,8 @@ package com.example.servlet;
 
 import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
+import com.example.controller.CoursesController;
+import com.example.controller.StudentCoursesController;
 import com.example.controller.StudentsController;
 import com.example.entity.Users;
 
@@ -12,27 +14,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/ManagerSelectAllStudentsServlet")
-public class ManagerSelectAllStudentsServlet extends HttpServlet {
+@WebServlet("/FrontSelfCoursesServlet")
+public class FrontSelfCoursesServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         String command=req.getParameter("command");
 
-        //String jsonStr = JSON.toJSONString(obj);
-        //User user = JSON.parseObject(jsonStr,User.class)
-        //        Users user = new Users();
-//        user.setUsername(username);
-//        user.setPassword(password);
-//        user.setRole(role);
-//        System.out.println(user);
-//        String jsonStr= JSON.toJSONString(user);
+
         StudentsController studentsController=new StudentsController();
+        StudentCoursesController studentCoursesController=new StudentCoursesController();
         Result result=null;
         if(command==null|| command.isEmpty()){
             result=Result.error();
-        }else if("SelectAllStudents".equals(command)){
-            result=studentsController.selectAll();
+        }else if("SelectSelfCourses".equals(command)){
+            result=studentsController.selectByStudentname(req.getParameter("username"));
+
+            if(result.getCode().equals("200")){
+                result=studentCoursesController.selectByStudent((Users)result.getData());
+            }else{
+                result=Result.error();
+            }
         }else{
             result=Result.error();
         }
@@ -48,4 +51,5 @@ public class ManagerSelectAllStudentsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         this.doGet(req, resp);
     }
+
 }

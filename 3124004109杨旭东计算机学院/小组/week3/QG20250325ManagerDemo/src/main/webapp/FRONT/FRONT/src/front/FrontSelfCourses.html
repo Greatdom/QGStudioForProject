@@ -29,6 +29,30 @@
     </div>
     <div class="right">
 
+        <div class="LeftList" style="display: inline-block;width:70%;height: 100%">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>课程ID</strong></td>
+                    <td><strong>学生ID</strong></td>
+                    <td><strong>课程名</strong></td>
+                    <td><strong>学生名</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!CoursesTable">
+                    <td color="black"><strong>无数据!</strong></td>
+                </tr>
+                <tr v-for="course in CoursesTable" :key="course.id">
+                    <td>{{ course?.courseId||'无课程ID' }}</td>
+                    <td>{{ course?.studentId||'无学生ID' }}</td>
+                    <td>{{ course?.courseName||'无名课程' }}</td>
+                    <td>{{ course?.studentName||'未知学生' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
 
@@ -39,12 +63,67 @@
     new Vue({
         el: '#app',
         data: {
-
+            command:"",
+            currentUser:null,
+            CoursesTable:null,
         },
         mounted() {
+            const storedUser = localStorage.getItem("currentUser");
+            if (storedUser) {
+                this.currentUser = JSON.parse(storedUser);
+                console.log("当前用户：", this.currentUser);
+
+            }
+
+            this.command="SelectSelfCourses";
+            this.load();
+            this.command="";
+
+            // this.CoursesTable=[
+            //   {"id":2,"name":"maths","status":"是"},
+            //   {"id":3,"name":"English","status":"否"},
+            //   {"id":4,"name":"Chinese","status":"否"}
+            // ];
+
 
         },
         methods:{
+            load(){
+                if(this.command===""){
+                    alert("请进行有效的指令");
+                }else if(this.currentUser===null){
+                 alert("请先登录");
+                }else{
+                    let LoadHttp;
+                    if(window.XMLHttpRequest){
+                        LoadHttp=new XMLHttpRequest();
+
+                    }else{
+                        LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                    }
+                    LoadHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/FrontSelfCoursesServlet");
+                    LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                    let requestBody = "command=" + encodeURIComponent(this.command)
+                    + "&username=" + encodeURIComponent(this.currentUser.username);
+
+                    LoadHttp.send(requestBody);
+
+                    LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+
+                        if (event.target.readyState === 4 && event.target.status === 200) {
+                            let result = JSON.parse(event.target.responseText);
+                            if(result.code==="200"){
+                                this.CoursesTable=result.data;
+                                console.log(this.CoursesTable);
+                            }else{
+                                alert("生成数据失败,请重新进入页面");
+                            }
+                        }
+
+                    }
+
+                }
+            }
 
         },
     });

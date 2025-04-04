@@ -12,6 +12,10 @@ public class CoursesController {
         List<Courses> courses =coursesService.selectAll();
         return Result.success(courses);
     }
+    public Result selectByCoursename(String name) {
+        Courses course=coursesService.selectByCoursename(name);
+        return Result.success(course);
+    }
     public Result insert(String Name,String Status) {
         Courses course = new Courses();
         course.setName(Name);

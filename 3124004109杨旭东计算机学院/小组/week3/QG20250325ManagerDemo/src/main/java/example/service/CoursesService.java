@@ -74,6 +74,11 @@ public class CoursesService {
         return 0;
     }
 
+    public Courses selectByCoursename(String name) {
+        return coursesMapper.selectByCoursename(name);
+    }
+
+
 //    public void addChoice(Users user) {
 //        mapper.addCourseChoice(user);
 //    }

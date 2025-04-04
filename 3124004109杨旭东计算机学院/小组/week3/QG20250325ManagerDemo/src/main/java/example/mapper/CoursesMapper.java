@@ -97,10 +97,47 @@ public class CoursesMapper {
             throw new RuntimeException(e);
         }
     }
-    public List<StudentCourses> selectCourseByStudent(Users user){
+//    public List<StudentCourses> selectCourseByStudent(Users user){
+//        String sql = "SELECT student_courses.*, " +
+//                "       students.username AS studentName, " +
+//                "       courses.name AS courseName " +
+//                "FROM student_courses " +
+//                "LEFT JOIN students ON student_courses.student_id = students.id " +
+//                "LEFT JOIN courses ON student_courses.course_id = courses.id " +
+//                "WHERE student_courses.student_id = ?";
+//        List<StudentCourses> studentCourses = new ArrayList<>();
+//        StudentCourses studentCourse = null;
+//
+//        try {
+//            Connection conn = DataSourceManager.getConn();
+//            PreparedStatement pstmt= conn.prepareStatement(sql);
+//            pstmt.setInt(1, user.getId());
+//            ResultSet rs = pstmt.executeQuery();
+//            while (rs.next()) {
+//                studentCourse = new StudentCourses();
+//                int courseId = rs.getInt("course_id");
+//                int studentId = rs.getInt("student_id");
+//                String studentName = rs.getString("student_name");
+//                String courseName = rs.getString("course_name");
+//                studentCourse.setStudentId(studentId);
+//                studentCourse.setCourseId(courseId);
+//                studentCourse.setStudentName(studentName);
+//                studentCourse.setCourseName(courseName);
+//                studentCourses.add(studentCourse);
+//            }
+//            rs.close();
+//            pstmt.close();
+//            DataSourceManager.close(conn);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return studentCourses;
+//    }
+
+    public List<StudentCourses> selectCourseByStudent(Users user) {
         String sql = "SELECT student_courses.*, " +
-                "       students.username AS studentName, " +
-                "       courses.name AS courseName " +
+                "       students.username AS student_name, " + // 修改别名为 student_name
+                "       courses.name AS course_name " +
                 "FROM student_courses " +
                 "LEFT JOIN students ON student_courses.student_id = students.id " +
                 "LEFT JOIN courses ON student_courses.course_id = courses.id " +
@@ -110,14 +147,15 @@ public class CoursesMapper {
 
         try {
             Connection conn = DataSourceManager.getConn();
-            PreparedStatement pstmt= conn.prepareStatement(sql);
+            PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, user.getId());
             ResultSet rs = pstmt.executeQuery();
+
             while (rs.next()) {
                 studentCourse = new StudentCourses();
                 int courseId = rs.getInt("course_id");
                 int studentId = rs.getInt("student_id");
-                String studentName = rs.getString("student_name");
+                String studentName = rs.getString("student_name"); // 确保这里使用正确的列名
                 String courseName = rs.getString("course_name");
                 studentCourse.setStudentId(studentId);
                 studentCourse.setCourseId(courseId);
@@ -129,14 +167,16 @@ public class CoursesMapper {
             pstmt.close();
             DataSourceManager.close(conn);
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         return studentCourses;
     }
+
     public List<StudentCourses> selectCourseByCourse(Courses course){
         String sql = "SELECT student_courses.*, " +
-                "       students.username AS studentName, " +
-                "       courses.name AS courseName " +
+                "       students.username AS student_name, " +
+                "       courses.name AS course_name " +
                 "FROM student_courses " +
                 "LEFT JOIN students ON student_courses.student_id = students.id " +
                 "LEFT JOIN courses ON student_courses.course_id = courses.id " +
@@ -202,4 +242,5 @@ public class CoursesMapper {
         }
 
     }
+
 }

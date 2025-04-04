@@ -43,7 +43,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-show="!StudentsTable" style="background-color:red">
+                <tr v-show="!StudentsTable">
                     <td color="black"><strong>无数据!</strong></td>
                 </tr>
                 <tr v-for="student in StudentsTable" :key="student.id">
@@ -69,9 +69,6 @@
         data: {
             command:"",
             StudentsTable:null,
-                // [{"count":0,"id":1,"name":"joker","password":"aaa","phone":"13412345678","role":"STUDENT","username":"aaa"},
-                // {"count":0,"id":2,"password":"123456","role":"STUDENT","username":"test"},
-                // {"count":0,"id":3,"password":"student","role":"STUDENT","username":"student"}],
         },
         mounted() {
             this.command="SelectAllStudents";
