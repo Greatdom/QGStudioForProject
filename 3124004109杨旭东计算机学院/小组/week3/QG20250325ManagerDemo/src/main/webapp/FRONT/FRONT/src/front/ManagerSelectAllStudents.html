@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理者查看学生界面</title>
+    <script src="../js/vue.js"></script>
+    <link rel="stylesheet" href="../asset/css/front.css">
+</head>
+<body>
+<div id="app" class="Home">
+    <div class="header">
+
+        <a href="#" class="ICON">
+            <img src="../asset/img/ICON.png" alt="学生管理系统" style="position:absolute;bottom:22px">
+            <strong style="position:absolute;left:60px;bottom:20px">学生管理系统</strong>
+        </a>
+
+        <h2 style="position: absolute;left:250px;top:14px;color:whitesmoke">后台 > 学生管理</h2>
+
+        <button><strong>退出登录</strong></button>
+
+    </div>
+
+    <div class="left">
+        <a href="ManagerHome.html"><strong>查看修改个人信息</strong></a>
+        <a href="#"  style="border-right: darkcyan solid 5px"><strong>查看所有学生信息</strong></a>   <!-- 其中可以修改学生信息，还可以根据学生查询
+           某个学生选择的课程-->
+        <a href="ManagerSelectAllCourses.html"><strong>查看所有课程信息</strong></a>  <!-- 其中可以增删课程，还可以根据课程查询
+            选择某个课程的学生-->
+
+    </div>
+    <div class="right">
+        <div class="LeftList" style="display: inline-block;width:70%;height: 100%">
+            <table>
+                <thead style="display:block;width:100%;height: 10%">
+                <tr style="background-color: cadetblue">
+                    <td><strong>ID</strong></td>
+                    <td><strong>姓名</strong></td>
+                    <td><strong>账号</strong></td>
+                    <td><strong>密码</strong></td>
+                    <td><strong>电话</strong></td>
+                    <td><strong>选课数量</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-show="!StudentsTable" style="background-color:red">
+                    <td color="black"><strong>无数据!</strong></td>
+                </tr>
+                <tr v-for="student in StudentsTable" :key="student.id">
+                    <td>{{ student?.id||'无ID' }}</td>
+                    <td>{{ student?.name||'无姓名'}}</td>
+                    <td>{{ student?.username || '无账号' }}</td>
+                    <td>{{ student?.password || '无密码' }}</td>
+                    <td>{{ student?.phone || '无电话' }}</td>
+                    <td>{{ student?.count ?? '无选课数据' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            command:"",
+            StudentsTable:null,
+                // [{"count":0,"id":1,"name":"joker","password":"aaa","phone":"13412345678","role":"STUDENT","username":"aaa"},
+                // {"count":0,"id":2,"password":"123456","role":"STUDENT","username":"test"},
+                // {"count":0,"id":3,"password":"student","role":"STUDENT","username":"student"}],
+        },
+        mounted() {
+            this.command="SelectAllStudents";
+            this.load();
+            this.command="";
+
+            // this.StudentsTable=
+            // [{"count":0,"id":1,"name":"joker","password":"aaa","phone":"13412345678","role":"STUDENT","username":"aaa"},
+            // {"count":0,"id":2,"password":"123456","role":"STUDENT","username":"test"},
+            //     {"count":0,"id":2,"password":"123456","role":"STUDENT","username":"test"},
+            // {"count":0,"id":3,"password":"student","role":"STUDENT","username":"student"}];
+
+            // const storedUser = localStorage.getItem("currentUser");
+            // if (storedUser) {
+            //     this.currentUser = JSON.parse(storedUser);
+            //     console.log("当前用户：", this.currentUser);
+            //
+            // }
+        },
+        methods:{
+            load(){
+                // UpdateHttp.onreadystatechange = function(){
+                //     if(this.readyState==4&&this.status==200){
+                if(this.command===""){
+                    alert("请进行有效的指令");
+                }else{
+
+                    let LoadHttp;
+                    if(window.XMLHttpRequest){
+                        LoadHttp=new XMLHttpRequest();
+
+                    }else{
+                        LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                    }
+                    LoadHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/ManagerSelectAllStudentsServlet");
+                    LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                    let requestBody = "command=" + encodeURIComponent(this.command);
+
+                    LoadHttp.send(requestBody);
+                    LoadHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+                        if (event.target.readyState === 4 && event.target.status === 200) {
+                            let result = JSON.parse(event.target.responseText);
+                            if (result.code === "200") {
+                                this.StudentsTable = result.data; // 更新 StudentsTable
+                                console.log(this.StudentsTable);
+                            } else {
+                                alert("生成数据失败,请重新进入页面");
+                            }
+                        }
+                    }
+                }
+
+            }
+        },
+    });
+</script>
+</body>
+</html>

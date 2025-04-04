@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理者个人信息界面</title>
+    <script src="../js/vue.js"></script>
+    <link rel="stylesheet" href="../asset/css/front.css">
+</head>
+<body>
+<div id="app" class="Home">
+    <div class="header">
+
+        <a href="#" class="ICON">
+            <img src="../asset/img/ICON.png" alt="学生管理系统" style="position:absolute;bottom:22px">
+            <strong style="position:absolute;left:60px;bottom:20px">学生管理系统</strong>
+        </a>
+
+        <h2 style="position: absolute;left:250px;top:14px;color:whitesmoke">后台 > 个人信息</h2>
+
+        <button><strong>退出登录</strong></button>
+
+    </div>
+
+        <div class="left">
+            <a href="#" style="border-right: darkcyan solid 5px"><strong>查看修改个人信息</strong></a>
+           <a href="ManagerSelectAllStudents.html"><strong>查看所有学生信息</strong></a>   <!-- 其中可以修改学生信息，还可以根据学生查询
+           某个学生选择的课程-->
+            <a href="ManagerSelectAllCourses.html"><strong>查看所有课程信息</strong></a>  <!-- 其中可以增删课程，还可以根据课程查询
+            选择某个课程的学生-->
+
+        </div>
+        <div class="right ManagerHome">
+            <strong>欢迎登录后台，{{ currentUser ? currentUser.username : '您尚未登录' }}！</strong>
+            <div style="margin-top:10px;margin-bottom: 10px">
+                <!--            <p>用户名:{{currentUser.username ? currentUser.username : '无用户名'}}</p>-->
+                <!--            <p>密码:{{currentUser.password ? currentUser.password : '无密码'}}</p>-->
+                <p>账号: {{ currentUser?.username || '无账号' }}</p>
+                <p>密码: {{ currentUser?.password || '无密码' }}</p>
+                <p>姓名:{{ currentUser?.name||'无姓名' }}</p>
+                <p>ID:{{ currentUser?.id||'无ID' }}</p>
+                <p>角色:{{ currentUser?.role||'无角色' }}</p>
+                <p></p>
+            </div>
+            <strong v-show="currentUser">修改个人信息</strong><br>
+            <button v-show="currentUser" class="updateButton" @click="showUpdateForm"><strong>修改个人信息</strong></button>
+            <strong v-show="!currentUser">未登录用户无法修改个人信息</strong><br>
+            <button v-show="!currentUser"
+                    style="color:grey;background-color: skyblue;border:gray solid 2px">
+                修改个人信息</button>
+
+        </div>
+    <div v-show="updateForm" class="updateForm">
+        <div class="form">
+            <h2 style="display:block;width:100%;text-align:center;padding:10px 0;">修改个人信息</h2>
+            <div class="inputText">
+
+                <strong style="margin:0 8px">姓名:</strong><input type="text" placeholder="请输入姓名" v-model="FormName">
+            </div>
+            <div class="inputText">
+
+                <strong style="margin:0 8px">密码:</strong><input type="text" placeholder="请输入密码" v-model="FormPassword">
+            </div>
+
+            <div>
+                <button @click="Cancel" style="background-color:darkorange;color: aliceblue">取消</button>
+                <button @click="Save" style="background-color: darkgreen;color:aliceblue">确认</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            currentUser: null,
+            updateForm:false,
+            //表单数据
+            FormPassword:"",
+            FormName:"",
+        },
+        mounted() {
+            // 在页面加载完成后，从 localStorage 中读取用户数据
+            const storedUser = localStorage.getItem("currentUser");
+            if (storedUser) {
+                this.currentUser = JSON.parse(storedUser);
+                console.log("当前用户：", this.currentUser);
+                if(this.currentUser.password!==null){
+                    this.FormPassword=this.currentUser.password;
+                }
+                if(this.currentUser.name!==null){
+                    this.FormName=this.currentUser.name;
+                }
+            } else {
+
+                console.log("未找到用户数据");
+            }
+        },
+        methods:{
+            Cancel(){
+              this.showUpdateForm();
+                if(this.currentUser.password!==null){
+                    this.FormPassword=this.currentUser.password;
+                }else{
+                    this.FormPassword="";
+                }
+                if(this.currentUser.name!==null){
+                    this.FormName=this.currentUser.name;
+                }else{
+                    this.FormName="";
+                }
+            },
+            Save(){
+
+                this.FormName=this.FormName.trim();
+                this.FormPassword=this.FormPassword.trim();
+
+                if(this.FormName===""||this.FormName===null||
+                    this.FormPassword===""||this.FormPassword===null){
+                    this.Cancel();
+                    alert("更新数据时请填满数据");
+                }else{
+                    this.showUpdateForm();
+                    this.currentUser.name=this.FormName;
+                    this.currentUser.password=this.FormPassword;
+                    let UpdateHttp;
+                    if(window.XMLHttpRequest){
+                        UpdateHttp=new XMLHttpRequest();
+
+                    }else{
+                        UpdateHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                    }
+                    UpdateHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/UserUpdate");
+                    UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                    let requestBody = JSON.stringify(this.currentUser);
+                    UpdateHttp.send(requestBody);
+                    UpdateHttp.onreadystatechange = function(){
+                        if(this.readyState===4&&this.status===200){
+
+                            let result=JSON.parse(this.responseText);
+                            if(result.code==="200"){
+                                alert("更新成功");
+                            }else{
+                                alert("更新失败,请重新登录以恢复数据");
+                            }
+
+                        }
+                    }
+                }
+            },
+            showUpdateForm(){
+                this.updateForm = !this.updateForm;
+            }
+        }
+    });
+</script>
+</body>
+</html>

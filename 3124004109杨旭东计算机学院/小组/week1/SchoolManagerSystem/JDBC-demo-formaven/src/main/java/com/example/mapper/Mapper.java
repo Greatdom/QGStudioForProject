@@ -11,7 +11,7 @@ import java.util.List;
 public class Mapper {
 //    private static final String url="jdbc:mysql:///qg?useSSL=false";
 //    private static final String mysqlUsername = "root";
-//    private static final String mysqlPassword = "Aa1341512355";
+//    private static final String mysqlPassword = "xxxxxx";
 //    private static Connection conn;
 //
 //    static {
@@ -31,7 +31,7 @@ public class Mapper {
 
     private static final String url="jdbc:mysql://localhost:3306/qg?useSSL=false&allowPublicKeyRetrieval=true";
     private static final String mysqlUsername = "root";
-    private static final String mysqlPassword = "Aa1341512355";
+    private static final String mysqlPassword = "xxxxxx";
     private static Connection conn;
 
     static {
