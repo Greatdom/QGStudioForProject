@@ -153,11 +153,11 @@ ListNode* GetListNodeByList(List* list, int num) {
 		return NULL;
 	}
 	else if (num > list->hind->Count) {
-		printf("试图索取过大的下标的节点");
+		//printf("试图索取过大的下标的节点");
 		return NULL;
 	}
 	else if (num < list->head->Count) {
-		printf("试图索取过小下标的节点");
+		//printf("试图索取过小下标的节点");
 		return NULL;
 	}
 	if (num == list->head->Count) {

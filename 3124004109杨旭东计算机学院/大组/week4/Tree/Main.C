@@ -3,6 +3,11 @@
 
 int main() {
 	Tree* tree = CreateTextTree();
+	
+	tree=TurnToHeap(tree, 'S');
+	
+    printf("中序递归遍历\n");
+	inorderI(tree->root);
 	tree = DeStroyTree(tree);
 	//BST_levelOrder(tree->root);
 	/*printf("先序递归遍历\n");

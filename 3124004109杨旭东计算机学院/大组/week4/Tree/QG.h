@@ -27,6 +27,7 @@ typedef struct TreeNode {
 
 typedef struct Tree {
 	TreeNode* root;
+	char TreeStatus;//树的种类，‘N’则未定义，‘B’则二叉排序树及其衍生，‘H’则堆
 	int Length;
 }Tree;
 
@@ -45,17 +46,21 @@ void Print(List* list);
 Tree* NewTree();//生成一个空树
 bool IsNotEmptyTree(Tree* tree); 
 Tree* EnTree_BST(Tree* tree,int value);//BST树插入值
-Tree* DeTree_BST(Tree* tree, int value);//BST树删除值
-TreeNode* SelectTree_BST(Tree* tree, int value);//BST树查询值
+Tree* DeTree(Tree* tree, int value);//BST树删除值
+TreeNode* BST_SelectTree(Tree* tree, int value);//BST树查询值
 Tree* DeStroyTree(Tree* tree);//摧毁树
 
-void BST_preorderI(TreeNode* node);//递归先序遍历
-void BST_preorderR(TreeNode* node);//非递归先序遍历
-void BST_inorderI(TreeNode* node);//递归中序遍历
-void BST_inorderR(TreeNode* node);//非递归中序遍历
-void BST_postorderI(TreeNode* node);//递归后序遍历
-void BST_postorderR(TreeNode* node);//非递归后序遍历
-void BST_levelOrder(TreeNode* node);//层级遍历
+void preorderI(TreeNode* node);//递归先序遍历
+void preorderR(TreeNode* node);//非递归先序遍历
+void inorderI(TreeNode* node);//递归中序遍历
+void inorderR(TreeNode* node);//非递归中序遍历
+void postorderI(TreeNode* node);//递归后序遍历
+void postorderR(TreeNode* node);//非递归后序遍历
+void levelOrder(TreeNode* node);//层级遍历
+
+void HeapUp(TreeNode* node,char kind);//堆向上调整算法,char表示生成哪种堆，B则上大堆，S则上小堆
+void HeapDown(TreeNode* node);//堆向下调整算法
+Tree* TurnToHeap(Tree* tree,char kind);//转换成堆
 
 Tree* CreateTextTree();//生成测试用例
 

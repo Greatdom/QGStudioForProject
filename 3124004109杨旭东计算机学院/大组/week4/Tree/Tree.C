@@ -12,6 +12,7 @@ Tree* NewTree() {
 	else {
 		tree->root = NULL;
 		tree->Length = 0;
+		tree->TreeStatus = 'N';
 		return tree;
 	}
 }
@@ -28,12 +29,44 @@ bool IsNotEmptyTree(Tree* tree){
 	}
 }
 
-TreeNode* SelectTree_BST(Tree* tree, int value) {
+TreeNode* BST_SelectTree(Tree* tree, int value) {
 	if (!IsNotEmptyTree(tree)) {
 		return NULL;
 	}
 	else {
-		TreeNode* point = tree->root;
+		if (tree->TreeStatus == 'N') 
+		tree->TreeStatus = 'B';
+	else if (tree->TreeStatus == 'H') {
+		//TreeNode* point = tree->root;
+		//char HeapStatus;//判断是上最大堆还是上最小堆
+		//
+		//if (tree->Length == 1) {
+		//	if (tree->root->value == value)return tree->root;
+		//	else return NULL;
+		//}
+		//else {
+		//	if (tree->root->left != NULL)HeapStatus = tree->root->left->value > tree->root->value ? 'S' : 'B';
+		//	else HeapStatus = tree->root->right->value > tree->root->value ? 'S' : 'B';
+		//	if (value < tree->root->value && HeapStatus == 'S')return NULL;
+		//	if (value > tree->root->value && HeapStatus == 'B')return NULL;
+		//}
+		//while (point != NULL && point->value != value) {
+		//	
+		//	if (HeapStatus == 'S') {
+		//		if (point->left != NULL && value <= point->left->value)point = point->left;
+		//		else if (point->right != NULL && value >= point->right->value)point = point->right;
+		//		else return NULL;
+		//	}
+		//	if (HeapStatus == 'B') {
+		//		if (point->left != NULL && value >= point->left->value)point = point->left;
+		//		else if (point->right != NULL && value <= point->right->value)point = point->right;
+		//		else return NULL;
+		//	}
+		//}
+			return NULL;
+	}
+	else if (tree->TreeStatus == 'B') {
+        TreeNode* point = tree->root;
 		while (point!=NULL&&point->value!=value) {
 			if (value < point->value)
 				point = point->left;
@@ -42,9 +75,16 @@ TreeNode* SelectTree_BST(Tree* tree, int value) {
 		}
 		return point;
 	}
+	}
 }
 
-Tree* EnTree_BST(Tree* tree,int value) {//没做完
+Tree* EnTree_BST(Tree* tree,int value) {
+	if (tree->TreeStatus == 'N')
+		tree->TreeStatus = 'B';
+	else if (tree->TreeStatus == 'H') {
+		printf("这是堆");
+		return NULL;
+	}
 	TreeNode* node = (TreeNode*)malloc(sizeof(TreeNode));
 	if (node == NULL) {
 		printf("初始化栈节点失败");
@@ -93,8 +133,8 @@ Tree* EnTree_BST(Tree* tree,int value) {//没做完
 	}
 }
 
-Tree* DeTree_BST(Tree* tree, int value) {
-	TreeNode* point = SelectTree_BST(tree, value);
+Tree* DeTree(Tree* tree, int value) {
+	TreeNode* point = BST_SelectTree(tree, value);
 	if (point == NULL) {
 		printf("找不到待删除数据");
 	}
@@ -190,6 +230,7 @@ Tree* DeTree_BST(Tree* tree, int value) {
 
 Tree* CreateTextTree() {
 	Tree* tree = NewTree();
+	tree->TreeStatus = 'B';
 	tree = EnTree_BST(tree, 6);
 	tree = EnTree_BST(tree, 3);
 	tree = EnTree_BST(tree, 5);
@@ -207,7 +248,7 @@ Tree* CreateTextTree() {
 	BST_postorderI(tree->root);*/
 }
 
-void BST_preorderI(TreeNode* node) {
+void preorderI(TreeNode* node) {
 	if (node == NULL) return;
 	else {
 		printf("Current:%6d;", node->value);
@@ -215,27 +256,27 @@ void BST_preorderI(TreeNode* node) {
 		node->right ? printf("Right:%6d;", node->right->value) : printf("Right:  NULL;");
 		node->parent ? printf("Parent:%6d;", node->parent->value) : printf("Parent:  NULL;");
 		printf("\n");
-		BST_preorderI(node->left);
-		BST_preorderI(node->right);
+		preorderI(node->left);
+		preorderI(node->right);
 	}
 }
-void BST_inorderI(TreeNode* node) {
+void inorderI(TreeNode* node) {
 	if (node == NULL) return;
 	else {
-		BST_inorderI(node->left);
+		inorderI(node->left);
 		printf("Current:%6d;", node->value);
 		node->left ? printf("Left:%6d;", node->left->value) : printf("Left:  NULL;");
 		node->right ? printf("Right:%6d;", node->right->value) : printf("Right:  NULL;");
 		node->parent ? printf("Parent:%6d;", node->parent->value) : printf("Parent:  NULL;");
 		printf("\n");
-		BST_inorderI(node->right);
+		inorderI(node->right);
 	}
 }
-void BST_postorderI(TreeNode* node) {
+void postorderI(TreeNode* node) {
 	if (node == NULL) return;
 	else {
-		BST_postorderI(node->left);
-		BST_postorderI(node->right);
+		postorderI(node->left);
+		postorderI(node->right);
 		printf("Current:%6d;", node->value);
 		node->left ? printf("Left:%6d;", node->left->value) : printf("Left:  NULL;");
 		node->right ? printf("Right:%6d;", node->right->value) : printf("Right:  NULL;");
@@ -243,7 +284,7 @@ void BST_postorderI(TreeNode* node) {
 		printf("\n");
 	}
 }
-void BST_preorderR(TreeNode* node) {
+void preorderR(TreeNode* node) {
 	if (node == NULL)return;
 	List* sort = NewList();
 	List* save = NewList();
@@ -267,7 +308,7 @@ void BST_preorderR(TreeNode* node) {
 	sort = DeStory(sort);
 	save = DeStory(save);
 }
-void BST_inorderR(TreeNode* node) {
+void inorderR(TreeNode* node) {
 	if (node == NULL)return;
 	List* sort = NewList();
 	List* save = NewList();
@@ -290,7 +331,7 @@ void BST_inorderR(TreeNode* node) {
 	save = DeStory(save);
 
 }
-void BST_postorderR(TreeNode* node) {
+void postorderR(TreeNode* node) {
 	if (node == NULL)return;
 	List* sort = NewList();
 	List* temp = NewList();
@@ -323,7 +364,7 @@ void BST_postorderR(TreeNode* node) {
 	temp = DeStory(temp);
 	save = DeStory(save);
 }
-void BST_levelOrder(TreeNode* node) {
+void levelOrder(TreeNode* node) {
 	List* save = NewList();
 	save = EnList(save);
 	save->hind->Point = node;
@@ -344,6 +385,12 @@ void BST_levelOrder(TreeNode* node) {
 	save = DeStory(save);
 }
 Tree* DeStroyTree(Tree* tree) {
+	if (tree->TreeStatus == 'B') {
+
+	}
+	else {
+
+	}
 	List* sort = NewList();
 	List* temp = NewList();
 	sort = EnList(sort);
@@ -363,12 +410,106 @@ Tree* DeStroyTree(Tree* tree) {
 	}
 	int TempValue;
 	while (IsNotEmptyList(temp)) {
-		TempValue = temp->hind->Point->value;
+		/*TempValue = temp->hind->Point->value;
 		temp = DeList(temp);
-		tree = DeTree_BST(tree, TempValue);
+		tree = DeTree(tree, TempValue);*/
+		free(temp->hind->Point);
+		temp = DeList(temp);
 	}
 	free(tree);
 	sort = DeStory(sort);
 	temp = DeStory(sort);
 	return NULL;
+}
+void HeapUp(TreeNode* node, char kind) {
+	/*if (node->left == NULL && node->right == NULL)return;
+	HeapUp(node->left, kind);
+	HeapUp(node->right, kind);
+	TreeNode* temp = NULL;
+	if (node->left == NULL)temp = node->right;
+	else if (node->right == NULL)temp = node->left;
+	else if (kind == 'B')temp = node->left->value > node->right->value ? node->left : node->right;
+	else if (kind == 'S')temp = node->left->value < node->right->value ? node->left : node->right;
+	if(kind=='B')*/
+}
+
+Tree* TurnToHeap(Tree* tree,char kind){
+
+	if (!IsNotEmptyTree(tree))return;
+	List* sort = NewList();
+	List* save = NewList();//若kind==S则链头为最小值，生成上最小堆
+	TreeNode* current = tree->root;
+	while (current != NULL || IsNotEmptyList(sort)) {
+		while (current != NULL) {
+			sort = EnList(sort);
+			sort->hind->Point = current;
+			current = current->left;
+		}
+		current = sort->hind->Point;
+		sort = DeList(sort);
+		save = EnList(save);
+		save->hind->Point = current;
+		current = current->right;
+	}
+	sort = DeStory(sort);
+	ListNode* PointI = save->head;
+	ListNode* PointJ = save->head;
+	for (int i = save->head->Count; i <= save->hind->Count; i++) {
+		PointI = GetListNodeByNode(PointI, i);
+		PointJ = save->head;
+		for (int j = save->head->Count; j < i; j++) {
+			PointJ = GetListNodeByNode(PointJ, j);
+			//if (PointI->Point->value < PointJ->Point->value)
+			bool SHeapJudge = PointI->Point->value < PointJ->Point->value;
+			bool BHeapJudge = PointI->Point->value > PointJ->Point->value;
+			if (kind=='S'? SHeapJudge:BHeapJudge) {
+				int k;
+				ListNode* PointK1 = PointI;
+				ListNode* PointK2 = PointI;
+				int Temp = PointI->Point->value;
+				for (k = i; k > j; k--) {
+					PointK1 = GetListNodeByNode(PointK1, k);
+					PointK2 = GetListNodeByNode(PointK2, k - 1);
+					PointK1->Point->value = PointK2->Point->value;
+				}
+				PointK2->Point->value = Temp;
+				break;
+			}
+		}
+	}
+	{
+		ListNode* Point = save->head;
+		while (Point != NULL) {
+			Point->Point->left = NULL;
+			Point->Point->right = NULL;
+			Point->Point->parent = NULL;
+			Point = Point->next;
+		}
+		Point = save->head;
+		while (Point != NULL) {
+			ListNode* temp = GetListNodeByList(save, (Point->Count + 1) * 2 - 1);
+			if(temp!=NULL)
+			Point->Point->left = temp->Point;
+			if (Point->Point->left != NULL)Point->Point->left->parent = Point->Point;
+
+			temp = GetListNodeByList(save, (Point->Count + 1) * 2);
+			if(temp!=NULL)
+			Point->Point->right = temp->Point;
+			if (Point->Point->right != NULL)Point->Point->right->parent = Point->Point;
+			Point = Point->next;
+		}
+		if (save->head != NULL)
+			tree->root = save->head->Point;
+		else {
+			printf("生成堆错误");
+			return NULL;
+		}
+		tree->TreeStatus = 'H';
+	}
+	printf("生成堆:\n");
+	Print(save);
+	
+
+	
+	return tree;
 }
