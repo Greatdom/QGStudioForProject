@@ -102,7 +102,7 @@
                     }else{
                         LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
                     }
-                    LoadHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/FrontSelfCoursesServlet");
+                    LoadHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/Home/FrontSelfCoursesServlet");
                     LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                     let requestBody = "command=" + encodeURIComponent(this.command)
                     + "&username=" + encodeURIComponent(this.currentUser.username);

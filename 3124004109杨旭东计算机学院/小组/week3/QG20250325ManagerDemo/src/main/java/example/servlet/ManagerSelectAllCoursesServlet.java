@@ -5,7 +5,6 @@ import com.example.common.Result;
 import com.example.controller.CoursesController;
 import com.example.controller.StudentCoursesController;
 import com.example.entity.Courses;
-import com.example.entity.Users;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/ManagerSelectAllCoursesServlet")
+@WebServlet("/Home/ManagerSelectAllCoursesServlet")
 public class ManagerSelectAllCoursesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

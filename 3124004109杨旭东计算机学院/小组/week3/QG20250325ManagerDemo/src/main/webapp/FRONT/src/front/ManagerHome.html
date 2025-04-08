@@ -131,7 +131,7 @@
                     }else{
                         UpdateHttp =new ActiveXObject("Microsoft.XMLHTTP");
                     }
-                    UpdateHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/UserUpdate");
+                    UpdateHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/Home/UserUpdate");
                     UpdateHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                     let requestBody = JSON.stringify(this.currentUser);
                     UpdateHttp.send(requestBody);

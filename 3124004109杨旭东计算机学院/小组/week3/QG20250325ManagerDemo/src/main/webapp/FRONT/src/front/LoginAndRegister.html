@@ -32,10 +32,12 @@
                     <input type="radio" value="STUDENT" v-model="LoginRole" >用户
                 </label>
             </div>
+            <div class="select">
+                <strong>记住我七天:</strong>
+                <input type="checkbox" value="true" v-model="Remember">
+            </div>
 
-
-
-            <div style="text-align: end"><p @click="SwitchIsLogin">没有账号？注册</p></div>
+            <div style="text-align: end"><p @click="SwitchIsLogin">没有账号？<strong>注册</strong></p></div>
             <div>
                 <button @click="Login">登录</button>
             </div>
@@ -60,7 +62,6 @@
                 </label>
             </div>
 
-
             <div style="text-align: end"><p @click="SwitchIsLogin">已有账号？登录</p></div>
             <div>
                 <button @click="Register">注册</button>
@@ -78,10 +79,48 @@
                 LoginUserName:"",
                 LoginPassWord:"",
                 LoginRole:"STUDENT",
+                Remember:false,
+
                 RegisterUserName:"",
                 RegisterPassWord:"",
                 RegisterRole:"STUDENT",
+
                 CurrentUser:""//如果成功登录则有数据并跳转
+            },
+            mounted(){
+                let command="Load";
+                let LoginHttp;
+                if(window.XMLHttpRequest){
+                    LoginHttp=new XMLHttpRequest();
+
+                }else{
+                    LoginHttp =new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                LoginHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/Login");
+
+                LoginHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+                let requestBody = "command=" + encodeURIComponent(command);
+
+                LoginHttp.send(requestBody);
+
+                LoginHttp.onreadystatechange = (event) => { // 使用箭头函数确保 this 指向 Vue 实例
+
+                    if (event.target.readyState === 4 && event.target.status === 200) {
+                        let CookieUser = JSON.parse(event.target.responseText);
+                        if(CookieUser.code==="200"){
+                            console.log("当前用户"+CookieUser);
+                            this.LoginUserName=CookieUser.data.username;
+                            this.LoginPassWord=CookieUser.data.password;
+                            this.LoginRole=CookieUser.data.role;
+                        }else{
+                            alert(CookieUser.msg);
+                        }
+                    }
+
+                }
+
+
             },
             methods:{
                 SwitchIsLogin(){
@@ -145,6 +184,7 @@
                     }else{
                         this.LoginUserName=this.LoginUserName.trim();
                         this.LoginPassWord=this.LoginPassWord.trim();
+                        let command="Login";
                         let LoginHttp;
                         if(window.XMLHttpRequest){
                             LoginHttp=new XMLHttpRequest();
@@ -159,7 +199,9 @@
 
                         let requestBody = "username=" + encodeURIComponent(this.LoginUserName)
                             + "&password=" + encodeURIComponent(this.LoginPassWord)
-                            + "&role=" + encodeURIComponent(this.LoginRole);
+                            + "&role=" + encodeURIComponent(this.LoginRole)
+                            + "&remember=" + encodeURIComponent(this.Remember)
+                            + "&command=" + encodeURIComponent(command);
                         LoginHttp.send(requestBody);
                         LoginHttp.onreadystatechange = function(){
                             if(this.readyState===4&&this.status===200){

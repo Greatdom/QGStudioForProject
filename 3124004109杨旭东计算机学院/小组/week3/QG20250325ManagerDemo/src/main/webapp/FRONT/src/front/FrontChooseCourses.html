@@ -105,7 +105,7 @@
                     }else{
                         LoadHttp =new ActiveXObject("Microsoft.XMLHTTP");
                     }
-                    LoadHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/FrontChooseCoursesServlet");
+                    LoadHttp.open("POST","http://localhost:8080/QG20250325LoginAndRegister_war/Home/FrontChooseCoursesServlet");
                     LoadHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                     let requestBody = "command=" + encodeURIComponent(this.command);
                     LoadHttp.send(requestBody);

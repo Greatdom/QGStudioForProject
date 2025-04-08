@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
 import com.example.controller.StudentsController;
 import com.example.controller.UsersController;
-import com.example.controller.WebController;
 import com.example.entity.Users;
 
 import javax.servlet.ServletException;
@@ -16,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-@WebServlet("/UserUpdate")
+@WebServlet("/Home/UserUpdate")
 public class UserUpdateServlet extends HttpServlet {
 
     @Override

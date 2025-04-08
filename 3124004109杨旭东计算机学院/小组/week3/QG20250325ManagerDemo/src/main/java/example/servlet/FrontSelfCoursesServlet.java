@@ -2,7 +2,6 @@ package com.example.servlet;
 
 import com.alibaba.fastjson.JSON;
 import com.example.common.Result;
-import com.example.controller.CoursesController;
 import com.example.controller.StudentCoursesController;
 import com.example.controller.StudentsController;
 import com.example.entity.Users;
@@ -14,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/FrontSelfCoursesServlet")
+@WebServlet("/Home/FrontSelfCoursesServlet")
 public class FrontSelfCoursesServlet extends HttpServlet {
 
     @Override
