@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Map;
 
@@ -20,10 +21,22 @@ public class RegisterServlet extends HttpServlet {
         String username=req.getParameter("username");
         String password=req.getParameter("password");
         String role=req.getParameter("role");
-        WebController webController=new WebController();
-        Result result=webController.register(username,password,role);
+        String checkcode=req.getParameter("checkcode");
+
+        HttpSession session=req.getSession();
+        String checkCodeGen = (String) session.getAttribute("checkCodeGen");
+        Result result =null;
+        if(!(checkCodeGen.equals(checkcode))){
+            result=Result.error();
+            System.out.println("验证码错误");
+        }else{
+            WebController webController=new WebController();
+            result=webController.register(username,password,role);
+        }
+
+
+
         String jsonStr= JSON.toJSONString(result);
-        System.out.println(jsonStr);
 
 
         //String jsonStr = JSON.toJSONString(obj);

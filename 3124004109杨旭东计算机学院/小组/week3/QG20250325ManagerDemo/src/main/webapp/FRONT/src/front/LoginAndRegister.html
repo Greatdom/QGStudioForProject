@@ -6,6 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="../asset/css/front.css">
+    <script src="../js/global.js"></script>
     <title>登录注册界面</title>
 </head>
 <body style=" background-color: blanchedalmond;
@@ -62,6 +63,17 @@
                 </label>
             </div>
 
+            <div class="inputText" >
+                <strong>验证码:</strong>
+                <label for="CheckCode"></label>
+                <input id="CheckCode" type="text" placeholder="验证码" v-model="CheckCode" style="width:40%;display: inline-block">
+                <img  id="CheckCodeImage" src="http://localhost:8080/QG20250325LoginAndRegister_war/CheckCodeServlet">
+                <strong @click="CheckCodeMethod">看不清?</strong>
+                <!--                http://localhost:8080/QG20250325LoginAndRegister_war/CheckCodeServlet-->
+                <!--                也可以/QG20250325LoginAndRegister_war/CheckCodeServlet，但此处想用绝对路径-->
+            </div>
+
+
             <div style="text-align: end"><p @click="SwitchIsLogin">已有账号？登录</p></div>
             <div>
                 <button @click="Register">注册</button>
@@ -84,6 +96,7 @@
                 RegisterUserName:"",
                 RegisterPassWord:"",
                 RegisterRole:"STUDENT",
+                CheckCode:"",
 
                 CurrentUser:""//如果成功登录则有数据并跳转
             },
@@ -126,21 +139,30 @@
                 SwitchIsLogin(){
                     this.IsLogin=!this.IsLogin
                 },
+                CheckCodeMethod(){
+                        const checkCodeImg = document.querySelector("#CheckCodeImage");
+                    checkCodeImg.src = "http://localhost:8080/QG20250325LoginAndRegister_war/CheckCodeServlet?" + new Date().getTime();
+                },
+
+
                 ReLoad(){
                     this.IsLogin=true;
+                    this.Remember=false;
                     this.LoginUserName="";
                     this.LoginPassWord="";
                     this.RegisterUserName="";
                     this.RegisterPassWord="";
                     this.LoginRole="STUDENT";
                     this.RegisterRole="STUDENT";
+                    this.CheckCode="";
                 },
                 Register(){
-                    if(this.RegisterUserName===""||this.RegisterPassWord===""){
-                        alert("用户名或密码不能为空！");
+                    if(this.RegisterUserName===""||this.RegisterPassWord===""||this.CheckCode===""){
+                        alert("用户名或密码或验证码不能为空！");
                     }else{
                         this.RegisterUserName=this.RegisterUserName.trim();
                         this.RegisterPassWord=this.RegisterPassWord.trim();
+                        this.CheckCode=this.CheckCode.trim();
                         let RegisterHttp;
                         if(window.XMLHttpRequest){
                             RegisterHttp=new XMLHttpRequest();
@@ -155,7 +177,8 @@
 
                         let requestBody = "username=" + encodeURIComponent(this.RegisterUserName)
                             + "&password=" + encodeURIComponent(this.RegisterPassWord)
-                            + "&role=" + encodeURIComponent(this.RegisterRole);
+                            + "&role=" + encodeURIComponent(this.RegisterRole)
+                            + "&checkcode=" + encodeURIComponent(this.CheckCode);
                         RegisterHttp.send(requestBody);
                         RegisterHttp.onreadystatechange = function(){
                             if(this.readyState===4&&this.status===200){

@@ -6,14 +6,15 @@ import com.example.controller.StudentsController;
 import com.example.controller.UsersController;
 import com.example.controller.WebController;
 import com.example.entity.Users;
+import com.example.util.CheckCodeUtil;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 
@@ -44,6 +45,11 @@ public class LoginServlet extends HttpServlet {
                 resp.addCookie(c_password);
                 resp.addCookie(c_role);
 
+            }
+
+            if("200".equals(result.getCode())){
+                HttpSession session=req.getSession();
+                session.setAttribute("username",username);
             }
 
             String jsonStr=JSON.toJSONString(result);
@@ -84,7 +90,6 @@ public class LoginServlet extends HttpServlet {
                     result=Result.error();
                 }
                 String jsonStr=JSON.toJSONString(result);
-                System.out.println(jsonStr);
                 resp.setHeader("Content-Type", "text/html; charset=UTF-8");
                 resp.getWriter().write(jsonStr);
 
